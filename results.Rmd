@@ -11,7 +11,6 @@ library(dplyr)
 library(stargazer)
 library(metafor)
 
-knitr::opts_chunk$set(echo = FALSE)
 
 ```
 
@@ -139,7 +138,7 @@ h.CI = function(){
 ```
 
 
-```{r, include = FALSE}
+```{r total vte}
 
 ################## Total VTE #######################
 
@@ -209,5 +208,151 @@ adjusted2 = exp(b.CI())
 n.high2 = length(nhigh)
 
 Total.VTE = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
+
+```{r symptomatic vte}
+
+################## Symptomatic VTE #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(0, 48, 0, 13, 9)
+n1 = c(127, 314, 83, 1128, 1123)
+
+### FXaI
+cs = c(1, 36, 1, 29, 12)
+n2 = c(120, 274, 84, 1126, 1129)
+
+
+### ni for each High risk of bias
+nhigh = c(4394, 295)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(b.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(0, 48, 0, 13, 9, 0, 8)
+n1 = c(127, 314, 83, 1128, 1123, 82, 351)
+
+### FXaI
+cs = c(1, 36, 1, 29, 12, 1, 8)
+n2 = c(120, 274, 84, 1126, 1129, 134, 350)
+
+
+### ni for each High risk of bias
+nhigh = c(4394, 295)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(b.CI())
+n.high2 = length(nhigh)
+
+Symptomatic.VTE = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
+
+```{r total PE}
+
+################## Total PE #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(5, 1 , 2)
+n1 = c(2699, 1128, 1123)
+
+### FXaI
+cs = c(3, 5, 2)
+n2 = c(2708, 1126, 1129)
+
+
+### ni for each High risk of bias
+nhigh = c(295, 588)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(b.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(5, 1 , 2, 0, 1)
+n1 = c(2699, 1128, 1123, 82, 351)
+
+### FXaI
+cs = c(3, 5, 2, 1, 2)
+n2 = c(2708, 1126, 1129, 134, 350)
+
+
+### ni for each High risk of bias
+nhigh = c(295, 588)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(b.CI())
+n.high2 = length(nhigh)
+
+Total.PE = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
 
 ```
