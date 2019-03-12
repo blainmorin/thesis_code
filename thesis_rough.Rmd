@@ -1,0 +1,528 @@
+---
+output: pdf_document
+indent: true
+header-includes:
+  - \usepackage{floatrow}
+  - \floatsetup[figure]{capposition=top}
+  - \floatsetup[table]{capposition=top}
+  - \floatplacement{figure}{H}
+  - \floatplacement{table}{H}
+  - \usepackage{setspace}\doublespacing
+  - \usepackage{rotating, graphicx}
+  - \usepackage{bbding}
+editor_options: 
+  chunk_output_type: console
+---
+
+
+\begin{center}
+\Large \textbf{Draft: Assessing Outcome Reporting Bias in a Systematic Review Of Venous Thromboembolism Prophilaxis}
+\end{center}
+
+\begin{center}
+\large Blain Morin
+
+\normalsize March 1, 2019
+\end{center}
+
+#Introduction
+\ 
+Systematic reviews are a "lens through which evidence is viewed" and aim to provide a scientifically rigorous summary of all available evidence regarding a specified research question (1). Healthcare systematic reviews often help summarize the benefits and harms of medical treatments (2). While a systematic review is a powerful tool, the method is not infallible. For example: publication bias, which is a well-known phenomenon where studies with statistically significant results are more likely to be published, can have a drastic effect on a review's conclusions (3). Since these types of biases threaten the validity of the review, it is therefore vital to formally assess their potential impacts. 
+
+In the same vein as publication bias, some outcomes may not be reported within a study if the results are not statistically significant. Outcomes may also be suppressed if their results conflict with the aims of the trial (4).  These nonrandom ommissions of information, known as outcome reporting bias (ORB), can have a substantial impact on the meta-analytic conclusions (5). 
+
+The direction of ORB depends on whether or not the outcome is a benefit or harm. Existing methods that are designed to correct for ORB assume that benefit outcomes are overstated and harm outcomes are understated (4). For example, it is conceivable that an industry-funded study is incentivized to report outcomes that make its product look favorable and may not report outcomes that make its product look harmful. 
+
+There is empirical evidence that statistically significant outcomes are more likely to be reported (6). A systematic review of outcome reporting bias reports that statistically significant outcomes have 2.2 to 4.7 times the odds of being reported (7). Moreover, harm outcomes are less likely to be fully reported than benefit outcomes (8). These empirical studies highlight the need for formally addressing ORB at both the study level and the review level. 
+
+ORB is often overlooked in systematic reviews. In a 2010 study, researchers investigated 283 reviews and found that 35% contained a trial with a high risk of ORB, but only 7% mentioned the risk of bias (6). Even when ORB is mentioned, its potential impact on the review's conclusions is often insufficiently addressed (9).
+
+Formally assessing the potential impact of ORB involves scrutinizing the studies that were excluded from the review because no relevant outcomes were reported, classifying the risk of bias in instances where included studies do not report certain outcomes, and conducting a sensitivity analysis on the meta-analyses' conclusions (7). This paper applies the Outcome Reporting Bias in Trials II (ORBIT II) classification system to a systematic review of Venous Thromboembolism Prophylaxis conducted by Brown University's Center for Evidence Synthesis in Health (CESH). After classifying the risk of bias of the admitted outcomes, the potential impact of ORB is assessed using a model-based sensitivity analysis (4). 
+
+# Data
+\ 
+The data for this ORB assessment come from the CESH report, "Venous Thromboembolism Prophylaxis in Major Orthopedic Surgery: Systematic Review Update." The review was sponsored by the Agency for Healthcare Research and Quality (AHRQ), whose mission is to "to produce evidence to make health care safer, higher quality, more accessible, equitable, and affordable, and to. make sure that the evidence is understood and used," (10). Users of this review include doctors, patients, and policymakers who wish to have a summary of all the available evidence regarding the benefits and potential harms of venous thromboembolism prophylaxis.
+
+Venous thromboembolism (VTE) is the development of a blood clot in a vein that enters circulation. One type of VTE is deep vein thrombosis (DVT), which refers to a blood clot that develops in an extremity (11). After a major orthopedic leg surgery, such as a total hip replacement (THR), a DVT may develop in the calf (distal DVT) or in the hip (proximal DVT). DVTs may produce symptoms such as pain and swelling but also may be asymptomatic. DVTs are of clinical interest because they are intermediaries for pulmonary embolisms (PE), which occur when a DVT becomes dislodged and enters the lungs. PEs are considered a catastrophic event and may lead to death (12). 
+
+The principal outcomes for the CESH review were decided on *a priori* and include various VTE outcomes, major bleeding events, and serious adverse events. The VTE outcomes are the efficacy measures, whereas major bleeding and serious adverse events are the safety measures.  Descriptions of the principal outcomes are found in Table 1.  
+
+There is considerable variation in the reported outcomes between studies in the VTE prophylaxis review. For example, fatal PE was only reported in 48% of the trials. The clinical judgment of the review authors is that data for VTE and major bleeding outcomes "should have been available for almost all trials; therefore outcomes were excluded selectively," (12). In the review, VTE and major bleeding outcomes that contain data from less than 80% of the available trials were classified as having a "high risk of reporting bias," (12). 
+
+The meta-analyses that are extracted from the VTE prophylaxis review compare the benefits and harms for two classes of pharmacological treatments, low weight molecular heparin (LWMH) and factor Xa inhibitors (FXaI), after THR surgery. THR surgery is selected because it is the surgery with the highest number of studies. The LWMH versus FXaI comparison is selected because it contains the highest number of meta-analyses (12). 
+
+All primary outcomes except for serious adverse events are used in this ORB assessment. Serious adverse events are dropped from the analysis because they were often not well defined within trials. The lack of a formal and consistent definition makes it difficult to judge the risk of bias.  
+
+```{r, results = 'asis', echo = FALSE, eval = FALSE}
+
+Outcome = c("Total VTE", "Symptomatic VTE",
+             "Total PE", "Fatal PE",
+             "Symptomatic PE", "Total DVT",
+             "Symptomatic DVT", "Proximal DVT", "Major Bleeding")
+
+Type = c(rep("Benefit", 8), "Harm")
+
+Description = c("PE + Symptomatic and Asymptomatic DVT",
+                "PE + Symptomatic DVT",
+                "Fatal + Nonfatal PE; Symptomatic and Asymptomatic PE",
+                "Death caused by PE",
+                "PE with clinical symptoms",
+                "Symptomatic + Asymptomatic; Proximal and Distal",
+                "DVT with clinical symptoms",
+                "DVT above the knee",
+                "Any major bleeding event")
+
+p = c("15%", "18%", "52%", "48%", "17%", "82%", "40%", "66%", "52%")
+
+outcome.descriptions = data.frame(Outcome, Type, Description, p)
+
+stargazer(outcome.descriptions,
+          header = FALSE,
+          table.placement = 'H',
+          title = "Outcome Descriptions",
+          summary = FALSE,
+          rownames = FALSE,
+          notes = c("Proportion of studies in the review that reported the outcome",
+                    "VTE = Venous Thromboembolism",
+                    "DVT = Deep Vein Thrombosis",
+                    "PE = Pulmonary Embolism"))
+
+
+
+```
+
+\begin{table}[H] \centering 
+  \caption{Outcome Descriptions} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}} cccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Outcome & Type & Description & p$^*$ \\ 
+\hline \\[-1.8ex] 
+Total VTE & Efficacy & PE + Symptomatic and Asymptomatic DVT & 15\% \\ 
+Symptomatic VTE & Efficacy & PE + Symptomatic DVT & 18\% \\ 
+Total PE & Efficacy & Fatal + Nonfatal PE; Symptomatic and Asymptomatic PE & 52\% \\ 
+Fatal PE & Efficacy & Death caused by PE & 48\% \\ 
+Symptomatic PE & Efficacy & PE with clinical symptoms & 17\% \\ 
+Total DVT & Efficacy & Symptomatic + Asymptomatic; Proximal and Distal & 82\% \\ 
+Symptomatic DVT & Efficacy & DVT with clinical symptoms & 40\% \\ 
+Proximal DVT & Efficacy & DVT above the knee & 66\% \\ 
+Major Bleeding & Safety & Any major bleeding event & 52\% \\ 
+\hline \\[-1.8ex] 
+\multicolumn{4}{l}{\footnotesize{$^*$proportion of studies in the review that reported the outcome}} \\ 
+\multicolumn{4}{l}{\footnotesize{VTE = Venous Thromboembolism}} \\ 
+\multicolumn{4}{l}{\footnotesize{DVT = Deep Vein Thrombosis}} \\ 
+\multicolumn{4}{l}{\footnotesize{PE = Pulmonary Embolism}} \\ 
+\end{tabular} 
+\end{table}  
+
+# Methods
+\ 
+First, studies that are excluded from the review are examined. If the exclusion reason is due to the lack of relevant outcome data, the trial is analysed to see if the relevant data was measured or likely to have been measured. If so, the trial is documented and included in the ORB assessment (7). 
+
+Next, an outcome matrix is constructed where the principle outcomes are the columns and each trial is a row. Each principal outcome that is reported per trial is recorded in the matrix. In the instances where the outcome is not reported, the ORBIT II classification is recorded. The ORBIT II method uses different classifications for benefit and harm outcomes (4). The decision trees for the classifications can be seen in Figures 1 and 2. The benefit outcome tree is used for efficacy outcomes. The harm tree is used for safety outcomes. 
+
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, eval = FALSE}
+
+### Benefit Outcome
+
+library(DiagrammeR)
+library(extrafont)
+grViz("
+
+digraph dot {
+
+graph [layout = dot,
+       rankdir = LR]
+
+node [shape = box, fontname = 'CM Sans', fontsize = 16]
+
+0[label = 'Benefit Outcome', penwidth=5, fontsize = 20]
+
+node [shape = box, fontname = 'CM Sans']
+
+1[label = 'Clearly Measured']
+2[label = 'Clearly Not Measured']
+3[label = 'Unclear if Measured']
+
+
+4[label = 'Clearly Analysed']
+5[label = 'Likely Analysed']
+6[label = 'Unlikely Analysed']
+7[label = 'Likely Measured and Analysed']
+8[label = 'Likely Not Measured']
+
+9[label = 'Reports Not Significant']
+10[label = 'Reports Significant']
+11[label = 'Insufficient for Inclusion']
+15[label = 'Nothing Reported']
+
+A; B; C; D; E; F; G; H; I;
+
+12[label = 'High Risk']
+13[label = 'Low Risk']
+14[label = 'No Risk']
+
+### Measured, clearly analysed
+0->1 0->2 0->3
+1->4 1->5 1->6
+4->9 4->10 4->11 4->15
+9->A 10->B 11->C
+A->12 B->14 C->13
+15->D D->12
+
+### Measured, likely analysed
+5->E E->12
+
+### Measured, Unlikely Analysed
+6->F F->13
+
+### Unclear if measured
+3->7 7->G G->12
+3->8 8->H H->13
+
+### Not measured
+2->I I->14
+
+}
+")
+
+```
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, eval=FALSE}
+
+### Harm Outcome
+
+library(DiagrammeR)
+library(extrafont)
+grViz("
+
+digraph dot {
+
+graph [layout = dot,
+       rankdir = LR]
+
+node [shape = box, fontname = 'CM Sans', fontsize = 16]
+
+0[label = 'Harm Outcome', penwidth=5, fontsize = 20]
+1[label = 'Explicitly Mentioned']
+2[label = 'Not Explicitly Mentioned']
+x[label = 'High Risk']
+y[label = 'Low Risk']
+z[label = 'No Risk']
+
+0->1 0->2
+
+3[label = 'Measured']
+4[label = 'Not Measured']; V
+4->V V->z
+
+1->3 1->4
+
+5[label = 'Compared']
+6[label = 'Not Compared']
+7[label = 'Unclear if Compared']
+
+3->5 3->6 3->7
+
+8[label = 'Reported p>.05']; P1
+9[label = 'Reported p<.05']; P2
+10[label = 'Insufficient Reporting']; P3
+
+5->8 8->P1 P1->x
+5->9 9->P2 P2->x
+5->10 10->P3 P3->y
+
+Q
+6->Q Q->z
+
+11[label = 'No Results Reported']; R1
+12[label = 'Reported Globally Across Groups']; R2
+13[label = 'Only Reported Some Groups']; R3
+
+7->11 11->R1 R1->x
+7->12 12->R2 R2->x
+7->13 13->R3 R3->x
+
+14[label = 'Likely Measured and Compared']
+15[label = 'Likely Measured but No Events']
+16[label = 'Likely not Measured']; U
+
+2->14 2->15 2->16
+16->U U->y
+
+17[label = 'Only Pooled Reported']; S1
+18[label = 'No Harms Reported']; S2
+
+14->17 17->S1 S1->x
+14->18 18->S2 S2->x
+
+19[label = 'All Other Harms Reported']; T1
+20[label = 'No Harms Reported']; T2
+
+15->19 19->T1 T1->y
+15->20 20->T2 T2->y
+
+
+
+}
+")
+
+```
+
+![Benefit Outcome Tree](benefit_flow.png){width=700px}
+
+![Harm Outcome Tree](harm_flor.png){width=700px}
+
+Some of the ORBIT II branches require clinical judgment. For example, the "G" classification on the benefit branch in Figure 1 requires a judgment call to be made as to whether or not the outcome was "likely" to have been measured and analyzed. For these instances, the clinicians who conducted the review were contacted for their assessment. 
+
+The ORBIT II matrix is used to conduct a sensitivity analysis that produces ORB-adjusted estimates. The ORB-adjusted estimates are calculated through a random-effects maximum likelihood function proposed by Copas 2017 (4). The random effects model is chosen because trials pulled from the literature cannot be assumed to share a common underlying population (13). The likelihood functions are different for benefit and harm outcomes.
+
+Both benefit and harm functions start with the classic random effects unadjusted likelihood function, $L_U(\theta, \tau^2)$:
+
+$$ L_U(\theta, \tau^2) = -\frac{1}{2} \sum_{Reported} \left\{ log(\sigma_i^2 + \tau^2) +\frac{(y_i - \theta)^2}{\sigma_i^2 +\tau^2} \right\} $$
+
+The benefit likelihood, $L_B(\theta, \tau^2)$, adds a term that accounts for the high risk of bias benefit outcomes being not statistically significant:
+
+$$  L_B(\theta, \tau^2) = L_U(\theta, \tau^2) +\sum_{High}log \left[  \Phi\left\{ \frac{z_\alpha\sigma_i - \theta}{\sqrt{\sigma_i^2 + \tau^2}} \right\} - \Phi \left\{\frac{-z_\alpha\sigma_i - \theta}{\sqrt{\sigma_i^2 + \tau^2}}  \right\} \right] $$
+where $\Phi$ is the cummulative density function of the normal distribution and $z_\alpha$ is the appropriate z score for the significance level, $alpha$. 
+
+The harm likelihood, $L_H(\theta, \tau^2)$, starts with the unadjusted likelihood function and adds a term that accounts for the high risk of bias harm outcomes being statistically significant:
+
+$$  L_H(\theta, \tau^2) = L_U(\theta, \tau^2) + \sum_{High}log \left\{ \Phi \left( \frac{\theta}{\sqrt{\sigma_i^2 + \tau^2}} \right) \right\} $$
+
+# Results
+
+## Analysis of Excluded Studies
+\ 
+There were 290 excluded studies. Appendix B in the VTE prophylaxis lists the excluded studies along with the exclusion reason. Table 2 presents a tally of all the exclusion reasons.
+
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'asis'}
+
+library(readr)
+library(dplyr)
+library(stargazer)
+
+excluded = read_csv("excluded.csv")
+
+excluded.table = excluded %>%
+  group_by(`Reject reason`) %>%
+  tally()
+
+excluded.table = excluded.table[-19,] %>%
+  rename('Rejection Reason' = "Reject reason")
+
+stargazer(excluded.table,
+          title = "Tally of Rejection Reasons",
+          header = FALSE,
+          table.placement = 'H',
+          summary = FALSE,
+          rownames = FALSE)
+```
+
+The rejection reasons in Table 2 that are possibly relevant to ORB are: "No outcome of interest", "Insufficient results data reported", and "No results reported." Each study with these rejection reasons was examined to see if the is relevant to the LWMH and FXaI comparison in THR. No excluded studies compare  LWMH and FXaI treatments and thus none are added to the ORBIT matrix. Relevancy conclusions are listed in Table 3. 
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'asis', eval = FALSE}
+
+library(readr)
+library(dplyr)
+library(stargazer)
+
+reason.names = excluded.table$`Rejection Reason`[c(4,9,11)]
+
+suspect.papers = excluded %>%
+  select(`pubmed id`, authors, title, journal, `Reject reason`) %>%
+  rename(reject_reason = "Reject reason") %>%
+  filter(reject_reason %in% reason.names)
+
+Relevant = c(rep("No", 6))
+Reason = c("Compares Rivaroxaban to Aspirin",
+           "Outcomes relate to length of hospital stay and prophylaxis patterns",
+           "Not RCT, no sample sizes reported",
+           "RCT of FXaI versus Enoxaparin",
+           "Not RCT, pro and con discussion of prophylaxis options",
+           "Examines total knee replacement, not THR")
+
+suspect.papers[,6] = Relevant
+suspect.papers[,7] = Reason
+
+colnames(suspect.papers) = c("Pubmed ID", "Authors", "Title", "Journal", "Rejection Reason", "Relevant?", "Reason")
+
+suspect.papers2 = suspect.papers %>%
+  select(`Pubmed ID`, `Rejection Reason`, `Relevant?`, Reason)
+
+stargazer(suspect.papers2,
+          title = "Papers Omitted Because of Missing Data",
+          header = FALSE,
+          table.placement = 'H',
+          summary = FALSE,
+          rownames = FALSE)
+```
+
+\begin{table}[H] \centering 
+  \caption{Papers Omitted Because of Missing Data} 
+  \label{} 
+\begin{tabular}{p{3cm}p{3.5cm}p{2cm}p{6cm}}{{\extracolsep{5pt}}} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Pubmed ID & Rejection Reason & Relevant? & Reason \\ 
+\hline \\[-1.8ex] 
+NCT01720108 & No results reported & No & Compares Rivaroxaban to Aspirin \\ 
+21305339 & No outcome of interest & No & Outcomes relate to length of hospital stay and prophylaxis patterns \\ 
+Abstract 903 & Insufficient results data reported & No & Not RCT, no sample sizes reported \\ 
+Abstract page 21 & Insufficient results data reported & No & RCT of FXaI versus Enoxaparin \\ 
+noPMID 01 & No results reported & No & Not RCT, pro and con discussion of prophylaxis options \\ 
+23355673 & No results reported & No & Examines total knee replacement, not THR \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+
+
+## ORBIT II Classification Matrix
+\ 
+There were 12 RCT that compared LWMH and FXaI in THR. Only two of the trials, Eriksson 2010 and Fuji 2015, reported all principal outcomes. There was substantial missingness in many of the outcomes. For example, only 50% of the trials reported Total PE. The instances with a high risk of bias are almost all "E" classifications, which means that they were clearly measured and likely analyzed but no results were reported. Many of the low risk of bias "F" classifications were due to no events occurring. One article, Zhang 0214, was in Chinese and only had a translation for its abstract. 
+
+There were many instances where it was unclear as to why some trial outcomes were not included in certain meta-analyses. For example, in Kim2016, it seems that Total VTE could be calculated from the asymptomatic DVT, symptomatic DVT, and PE events reported. Instead of classifying these instances of high risk, it may be better to include the inferred data in the meta-analysis. These cases, where data can be inferred without the need for an ORBIT II classification are documented as "Y" in Table 4.
+
+
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'asis', eval = FALSE}
+
+library(readr)
+library(dplyr)
+library(stargazer)
+
+orbit = read.csv('orbit.csv')
+
+bens = orbit%>% 
+  select(-pmid, -studyid)
+
+stargazer(bens,
+          title = "ORBIT II Matrix: LWMH vs FXaI in THR",
+          header = FALSE,
+          table.placement = 'H',
+          summary = FALSE,
+          rownames = FALSE,
+          float.env = "sidewaystable",
+          font.size = 'small',
+          column.sep.width = '3pt',
+          notes = c("$^1$try", "try2"))
+
+```
+
+\begin{sidewaystable}[H] \centering 
+  \caption{ORBIT II Matrix: LWMH vs FXaI in THR} 
+  \label{} 
+\small 
+\begin{tabular}{@{\extracolsep{3pt}} cccccccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Study.Name & Total.VTE & Symptomatic.VTE & Total.PE & Fatal.PE & Symptomatic.PE & Total.DVT & Symptomatic.DVT & Proximal.DVT & Major.Bleeding \\
+\hline \\[-1.8ex] 
+eriksson2010 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+fuji2014A & \checkmark & \checkmark & F$^1$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+fuji2014D & \checkmark & Y$^2$ & Y$^3$ & F$^4$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+fuji2015 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+lassen2010A & \checkmark & E$^5$ & \checkmark & \checkmark & Y$^6$ & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+raskob2010 & \checkmark & E$^7$ & Y$^8$ & F$^9$ & \checkmark & E$^{10}$ & E$^{11}$   & \checkmark & \checkmark \\ 
+eriksson2014 & \checkmark & E$^{12}$ & E$^{13}$ & \checkmark & E$^{14}$ & E$^{15}$ & E$^{16}$   & E$^{17}$ & Y$^{18}$ \\ 
+yokote2011 & Y$^{19}$ & \checkmark & \checkmark & \checkmark & F$^{20}$ & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+zhang2014 & H$^{21}$ & H$^{22}$ & H$^{23}$ & H$^{24}$ & H$^{25}$ & \checkmark & H$^{26}$ & H$^{27}$ & U$^{28}$ \\ 
+turpie2002 & Y$^{29}$ & \checkmark & \checkmark & \checkmark & Y$^{30}$ & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+lassen2002 & Y$^{31}$ & \checkmark & \checkmark & \checkmark & Y$^{32}$ & \checkmark & \checkmark & \checkmark & \checkmark \\ 
+kim2016 & Y$^{33}$ & Y$^{34}$ & Y$^{35}$ & \checkmark & \checkmark & \checkmark & \checkmark & G$^{36}$ & \checkmark \\ 
+\hline \\[-1.8ex] 
+\multicolumn{10}{l}{\checkmark = Outcome was reported and included in the review Meta Anlaysis} \\ 
+\multicolumn{10}{l}{$^1$ No Events} \\ 
+\multicolumn{10}{l}{$^2$ Can calculate symptomatic VTE (symptomatic DVT + Symptomatic PE) from Table 2 page 204.} \\ 
+\multicolumn{10}{l}{$^3$ Symptomatic PE was measured and there were no deaths from any cause. Therefore nonfatal + fatal PE is known.} \\ 
+\multicolumn{10}{l}{$^4$ No Events.} \\
+\multicolumn{10}{l}{$^5$ The outcome that was reported and analysed is "Symptomatic VTE and Deaths from VTE." Symptomatic VTE was measured and likely analyzed.} \\ 
+\multicolumn{10}{l}{$^6$ Can calculate symptomatic PE from Non-fatal and fatal PE from Table 2 on pg 2494.} \\ 
+\multicolumn{10}{l}{$^7$ Symptomatic DVT and PE clearly were measured, likely analyzed. See pg 603. } \\ 
+\multicolumn{10}{l}{$^8$ There was one symptomatic PE, and no Fatal PE. Therefore, we know total PE. } \\ 
+\multicolumn{10}{l}{$^9$ No Events.} \\ 
+\multicolumn{10}{l}{$^{10}$ Total DVT was measured and likely analysed. See pg 603.} \\
+\multicolumn{10}{l}{$^{11}$ Symptomatic DVT was measured and likely analysed. See pg 603.} \\
+\multicolumn{10}{l}{$^{12}$ Symptomatic VTE measured as secondary outcome but not reported, was likely analysed.} \\
+\multicolumn{10}{l}{$^{13}$ See figure 2 and 3. Clear that PE was measured, but results underreported (bar graph, missing counts).} \\
+\multicolumn{10}{l}{$^{14}$ Per appendix, was measured. Results reported unclearly in a bar graph, was analysed.} \\
+\multicolumn{10}{l}{$^{15}$ Per appendix, total DVT was measured. Not reported in paper.} \\
+\multicolumn{10}{l}{$^{16}$ Was measured as part of symptomatic VTE. Was likely analysed. } \\
+\multicolumn{10}{l}{$^{17}$ Per appendix, was measured. Not reported in paper. } \\
+\multicolumn{10}{l}{$^{18}$ "Of the patients with major bleeding events (darexaban, n=25; enoxaparin, n=8)," (219). Data is reported.} \\
+\multicolumn{10}{l}{$^{19}$ Primary efficacy outcome appears to be total VTE. See description on pg 251.} \\
+\multicolumn{10}{l}{$^{20}$ No Events.} \\
+\multicolumn{10}{l}{$^{21-28}$ Only have abstract. Article is in Chinese.} \\
+\multicolumn{10}{l}{$^{29}$ Primary efficacy outcome appears to be total VTE. See description on pg 1722.} \\
+\multicolumn{10}{l}{$^{30}$ Table 3: Could sum symptomatic fatal PE and symptomatic non-fatal PE to get PE symptomatic.} \\
+\multicolumn{10}{l}{$^{31}$ Primary efficacy outcome appears to be total VTE. See description on pg 1716.} \\
+\multicolumn{10}{l}{$^{32}$ Table 3: Could sum symptomatic fatal PE and symptomatic non-fatal PE to get PE symptomatic.} \\
+\multicolumn{10}{l}{$^{33}$ Can calculate total VTE (asymptomatic + symptomatic DVT + PE)  from table 6, page 605. } \\
+\multicolumn{10}{l}{$^{34}$ Can calculate symptomatic VTE (symptomatic DVT + PE) from table 6, page 605.  } \\
+\multicolumn{10}{l}{$^{35}$ Can calculate total PE (Fatal + Nonfatal) from table 6, pg 605.  } \\
+\multicolumn{10}{l}{$^{36}$ Duplex Doppler USG scans were used on the legs. Proximal versus distal likely measured and analysed. } \\
+\end{tabular} 
+\end{sidewaystable} 
+
+## Sensitivity Analysis
+\ 
+Using the ORBIT II matrix in Table 4, the sensitivity analysis is conducted in two stages. First, the "Y" event data is added to the meta-analyses and effect sizes are re-estimated. Then, the bias-adjusted estimates are calculated using the Copas 2017 random effects model (4). 
+
+The following tables are preliminary trial runs with the fixed effects code. "Y" event data not included. (This section is still in progress) 
+
+
+```{r, results='asis', warning=FALSE, message=FALSE, echo=FALSE}
+
+library(readr)
+library(stargazer)
+ben.ex <- read_csv("LMWH vs FXaI for THR - Sheet5.csv")
+stargazer(ben.ex,
+          header = FALSE,
+          title = "ORB Adjustments For Benefit Outcomes",
+          summary = FALSE,
+          rownames = FALSE,
+          notes = "Note: These are preliminary fixed effect results.")
+
+```
+
+OR greater than 1 means favors FXaI. ORB adjustment towards the null. 
+
+```{r, results='asis', warning=FALSE, message=FALSE, echo=FALSE}
+
+library(readr)
+library(stargazer)
+harm.ex <- read_csv("LMWH vs FXaI for THR - Sheet6.csv")
+stargazer(harm.ex,
+          header = FALSE,
+          title = "ORB Adjustments For Harm Outcomes",
+          summary = FALSE,
+          rownames = FALSE,
+          notes = "Note: These are preliminary fixed effect results")
+
+```
+
+Direction of the OR estimate is unexpected. However, the CI is narrower and more significantly favors LMWH. 
+
+# Discussion
+
+# References
+
+1. 	Murad MH, Asi N, Alsawas M, Alahdab F. New evidence pyramid. BMJ Evid-Based Med. 2016 Aug 1;21(4):125-7.
+2. 	Higgings J, Green S, editors. Cochrane Handbook for Systematic Reviews of Interventions. Version 5.1.0 [updated March 2011]. The Cochrane Collaboration; 2011.
+3. 	Rothstein HR, Sutton AJ, Borenstein M. Publication Bias in Meta-Analysis Prevention, Assessment and Adjustments [Internet]. New York, NY: John Wiley & Sons; 2006 [cited 2019 Feb 19]. Available from: http://nbn-resolving.de/urn:nbn:de:101:1-201411164755
+4. 	Copas J, Marson A, Williamson P, Kirkham J. Model-based sensitivity analysis for outcome reporting bias in the meta analysis of benefit and harm outcomes. Stat Methods Med Res. 2017 Jan 1;962280217738546.
+5. 	Copas J, Dwan K, Kirkham J, Williamson P. A model-based correction for outcome reporting bias in meta-analysis. Biostat Oxf Engl. 2014 Apr;15(2):370-83.
+6. 	Kirkham JJ, Dwan KM, Altman DG, Gamble C, Dodd S, Smyth R, et al. The impact of outcome reporting bias in randomised controlled trials on a cohort of systematic reviews. BMJ. 2010 Feb 15;340:c365.
+7. 	Dwan K, Gamble C, Kolamunnage-Dona R, Mohammed S, Powell C, Williamson PR. Assessing the potential for outcome reporting bias in a review: a tutorial. Trials. 2010 May 12;11(1):52.
+8. 	Saini P, Loke YK, Gamble C, Altman DG, Williamson PR, Kirkham JJ. Selective reporting bias of harm outcomes within studies: findings from a cohort of systematic reviews. BMJ. 2014 Nov 21;349:g6501.
+9. 	Schmid CH. Outcome Reporting Bias: A Pervasive Problem in Published Meta-analyses. Am J Kidney Dis. 2017 Feb 1;69(2):172-4.
+10. About AHRQ [Internet]. [cited 2019 Feb 26]. Available from: https://www.ahrq.gov/cpi/about/index.html
+11. What Is Venous Thromboembolism? [Internet]. WebMD. [cited 2019 Feb 26]. Available from: https://www.webmd.com/dvt/what-is-venous-thromboembolism
+12. Balk EM, Ellis AG, Di M, Adam GP, Trikalinos TA. Venous Thromboembolism Prophylaxis in Major Orthopedic Surgery: Systematic Review Update [Internet]. Agency for Healthcare Research and Quality (AHRQ); 2017 Jun [cited 2019 Feb 19]. Available from: http://www.effectivehealthcare.ahrq.gov/index.cfm/search-for-guides-reviews-and-reports/?pageaction=displayproduct&productid=2480
+13. Borenstein M. Introduction to meta-analysis: Michael Borenstein ... [et al. Chicester: Wiley; 2009.

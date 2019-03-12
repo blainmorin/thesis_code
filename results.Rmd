@@ -1,0 +1,213 @@
+---
+title: "Results"
+author: "Blain Morin"
+date: "March 11, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+
+library(dplyr)
+library(stargazer)
+library(metafor)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+# Code for the functions:
+
+```{r}
+### Copas functions for Benefits
+b.lik = function(theta, tau2) {
+  
+  QH = sum(log(pnorm((1.96*sH - theta)/sqrt(sH^2 + tau2)) - pnorm((-1.96*sH - theta)/sqrt(sH^2 + tau2))))
+  
+  -1 * sum((y - theta)^2/(s^2 + tau2) + log(s^2 + tau2))/2 + QH
+  
+}
+
+
+b.CI = function(){
+  
+  lik1 = function(par, theta) { 
+    -1 * b.lik(theta, par[1]) 
+  }
+  
+  lik2 = function(theta, lik1){ 
+    
+    parhat = c(0)
+    
+    nlminb(parhat, lik1, lower = c(0), upper = c(Inf), theta = theta)$objective 
+    
+  }
+  
+  temp1 = nlminb(sum(y/s^2)/sum(1/s^2), lik2, lik1 = lik1)
+  
+  thetahat = temp1$par
+  
+  likmax = -1 * temp1$objective
+  
+  lik3 = function(theta, likmax, lik1, lik2){
+    (likmax + lik2(theta, lik1) - 1.96)^2 
+  }
+  
+  thetahatL = nlminb(thetahat - 0.01, lik3, upper = thetahat, likmax = likmax, lik1 = lik1, lik2 = lik2)$par
+  
+  thetahatU = nlminb(thetahat + 0.01, lik3, lower = thetahat, likmax = likmax, lik1 = lik1, lik2 = lik2)$par
+  
+  c(thetahatL, thetahat, thetahatU)
+  
+}
+
+CIRE = function(){
+  
+  likRE = function(tau2, theta){ 
+    sum((y - theta)^2/(s^2 + tau2) + log(s^2 + tau2))/2 
+  }
+  
+  likRE1 = function(theta, likRE){
+    nlminb(0, likRE, theta = theta, lower = 0)$objective 
+  }
+  
+  temp = nlminb(sum(y/s^2)/sum(1/s^2), likRE1, likRE = likRE)
+  
+  thetaREhat = temp$par
+  
+  likREmax = -1 * temp$objective
+  
+  likRE2 = function(theta, likREmax, likRE, likRE1){ 
+    (likREmax + likRE1(theta, likRE) - 1.96)^2 
+  }
+  
+  thetaREhatL = nlminb(thetaREhat - 0.01, likRE2, upper = thetaREhat, likREmax = likREmax, likRE = likRE, likRE1 = likRE1)$par
+  
+  thetaREhatU = nlminb(thetaREhat + 0.01, likRE2, lower = thetaREhat, likREmax = likREmax, likRE = likRE, likRE1 = likRE1)$par
+  
+  c(thetaREhatL, thetaREhat, thetaREhatU)
+  
+}
+
+
+```
+
+```{r}
+
+### HARM COPAS
+
+h.lik = function(theta, tau2) {
+  
+  QH = sum(log(pnorm(theta/sqrt(sH^2 + tau2))))
+  
+  -1 * sum((y - theta)^2/(s^2 + tau2) + log(s^2 + tau2))/2 + QH
+  
+}
+
+
+h.CI = function(){
+  
+  lik1 = function(par, theta) { 
+    -1 * h.lik(theta, par[1]) 
+  }
+  
+  lik2 = function(theta, lik1){ 
+    
+    parhat = c(0)
+    
+    nlminb(parhat, lik1, lower = c(0), theta = theta, upper = c(Inf))$objective
+    
+  }
+  
+  temp1 = nlminb(sum(y/s^2)/sum(1/s^2), lik2, lik1 = lik1)
+  
+  thetahat = temp1$par
+  
+  likmax = -1 * temp1$objective
+  
+  lik3 = function(theta, likmax, lik1, lik2){
+    (likmax + lik2(theta, lik1) - 1.96)^2 
+  }
+  
+  thetahatL = nlminb(thetahat - 0.01, lik3, upper = thetahat, likmax = likmax, lik1 = lik1, lik2 = lik2)$par
+  
+  thetahatU = nlminb(thetahat + 0.01, lik3, lower = thetahat, likmax = likmax, lik1 = lik1, lik2 = lik2)$par
+  
+  c(thetahatL, thetahat, thetahatU)
+  
+}
+
+```
+
+
+```{r, include = FALSE}
+
+################## Total VTE #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(24, 3, 2, 17, 25, 63)
+n1 = c(127, 74, 82, 248, 2195, 144)
+
+### FXaI
+cs = c(16, 2, 7, 6, 10, 32)
+n2 = c(120, 72, 134, 255, 2199, 151)
+
+
+### ni for each High risk of bias
+nhigh = c()
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(b.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(24, 3, 2, 17, 25, 63, 48, 5, 66, 85, 24)
+n1 = c(127, 74, 82, 248, 2195, 144, 314, 83, 797, 918, 351)
+
+### FXaI
+cs = c(16, 2, 7, 6, 10, 32, 36, 6, 48, 37, 26)
+n2 = c(120, 72, 134, 255, 2199, 151, 247, 84, 787, 908, 350)
+
+
+### ni for each High risk of bias
+nhigh = c()
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(b.CI())
+n.high2 = length(nhigh)
+
+Total.VTE = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
