@@ -356,3 +356,292 @@ n.high2 = length(nhigh)
 Total.PE = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
 
 ```
+
+```{r total DVT}
+
+################## Fatal PE #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(24, 3, 2, 17, 68, 5, 7, 65, 83, 23)
+n1 = c(127, 74, 82, 248, 1911, 83, 53, 796, 918, 351)
+
+### FXaI
+cs = c(16, 2, 6, 6, 22, 6, 0, 44, 36, 24)
+n2 = c(120, 72, 133, 255, 1944, 84, 53, 784, 908, 350)
+
+
+### ni for each High risk of bias
+nhigh = c(295, 588)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(b.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(24, 3, 2, 17, 68, 5, 7, 65, 83, 23)
+n1 = c(127, 74, 82, 248, 1911, 83, 53, 796, 918, 351)
+
+### FXaI
+cs = c(16, 2, 6, 6, 22, 6, 0, 44, 36, 24)
+n2 = c(120, 72, 133, 255, 1944, 84, 53, 784, 908, 350)
+
+
+### ni for each High risk of bias
+nhigh = c(295, 588)
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(b.CI())
+n.high2 = length(nhigh)
+
+Total.DVT = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
+
+```{r syptomatic DVT}
+
+################## Fatal PE #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(0, 5, 0, 0, 1, 7)
+n1 = c(127, 2699, 83, 1128, 1123, 351)
+
+### FXaI
+cs = c(1, 1, 1, 5, 3, 6)
+n2 = c(120, 2708, 84, 1126, 1129, 350)
+
+
+### ni for each High risk of bias
+nhigh = c(295, 588)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(b.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(0, 5, 0, 0, 1, 7)
+n1 = c(127, 2699, 83, 1128, 1123, 351)
+
+### FXaI
+cs = c(1, 1, 1, 5, 3, 6)
+n2 = c(120, 2708, 84, 1126, 1129, 350)
+
+
+### ni for each High risk of bias
+nhigh = c(295, 588)
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(b.CI())
+n.high2 = length(nhigh)
+
+Symptomatic.DVT = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
+
+```{r proximal DVT}
+
+################## Proximal DVT #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(5, 2, 20, 20, 0, 10, 23)
+n1 = c(127, 248, 2190, 144, 83, 830, 927)
+
+### FXaI
+cs = c(2, 1, 7, 5, 1, 14, 6)
+n2 = c(120, 255, 2196, 151, 84, 816, 922)
+
+
+### ni for each High risk of bias
+nhigh = c(588, 701)
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(b.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(5, 2, 20, 20, 0, 10, 23)
+n1 = c(127, 248, 2190, 144, 83, 830, 927)
+
+### FXaI
+cs = c(2, 1, 7, 5, 1, 14, 6)
+n2 = c(120, 255, 2196, 151, 84, 816, 922)
+
+
+### ni for each High risk of bias
+nhigh = c(588, 701)
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(b.CI())
+n.high2 = length(nhigh)
+
+Proximal.DVT = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
+
+```{r major bleeding}
+
+################## Proximal DVT #######################
+
+########## Paper Reported Numbers #################
+
+### LMWH
+as = c(1, 0, 6, 18, 0, 11, 32, 9)
+n1 = c(166, 87, 301, 2659, 172, 1129, 1133, 351)
+
+### FXaI
+cs = c(1, 1, 2, 22, 1, 20,47, 10)
+n2 = c(163, 85, 303, 2673, 170, 1128, 1140, 350)
+
+
+### ni for each High risk of bias
+nhigh = c()
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted = exp(CIRE())
+adjusted = exp(h.CI())
+n.high = length(nhigh)
+
+
+############## Include Blain Calcs #######################
+
+### LMWH
+as = c(1, 0, 6, 18, 0, 11, 32, 9, 8)
+n1 = c(166, 87, 301, 2659, 172, 1129, 1133, 351, 314)
+
+### FXaI
+cs = c(1, 1, 2, 22, 1, 20,47, 10, 25)
+n2 = c(163, 85, 303, 2673, 170, 1128, 1140, 350, 274)
+
+
+### ni for each High risk of bias
+nhigh = c()
+
+
+### Calculate ORs and variances
+ors = escalc(measure = "OR", ai = as, n1i = n1, ci = cs, n2i = n2)
+
+y = ors$yi
+s = sqrt(ors$vi)
+nreported = n1 + n2
+
+
+### Estimate unreported variances
+kbar = sum(s^-2)/sum(nreported)
+
+sH = sqrt(1/(kbar*nhigh))
+
+unadjusted2 = exp(CIRE())
+adjusted2 = exp(h.CI())
+n.high2 = length(nhigh)
+
+Major.Bleeding = c(unadjusted, adjusted, unadjusted2, adjusted2, n.high2)
+
+```
